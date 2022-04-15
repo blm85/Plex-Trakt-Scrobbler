@@ -184,8 +184,11 @@ class LibraryBase(object):
                 return None
 
             if not isinstance(value, datetime):
-                log.debug('Invalid value provided for DateTimeField: %r (expected datetime instance)', value)
-                return None
+                try:
+                    value = datetime.fromtimestamp(value, pytz.utc)
+                except Exception:
+                    log.debug('Invalid value provided for DateTimeField: %r (expected datetime instance)', value)
+                    return None
 
             if value.tzinfo:
                 # `tzinfo` provided, ignore conversion
